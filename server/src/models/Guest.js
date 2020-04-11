@@ -1,5 +1,8 @@
+const Promise = require('bluebird')
+const bycrpt = Promise.promisifyAll(require('bcryptjs'))
+
 module.exports = function (sequelize, DataTypes) {
-  return sequelize.define('Guest', {
+  const Guest = sequelize.define('Guest', {
     full_name: {
       type: DataTypes.STRING,
       unique: true
@@ -9,4 +12,10 @@ module.exports = function (sequelize, DataTypes) {
     rsvp_code: DataTypes.STRING,
     rsvp_consumed: DataTypes.BOOLEAN
   });
+
+  Guest.prototype.compareCode = function (rsvp_code) {
+    return bycrpt.compareAsync(rsvp_code, this.rsvp_code)
+  }
+
+  return Guest
 };
